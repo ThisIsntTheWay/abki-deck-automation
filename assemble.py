@@ -1,12 +1,16 @@
 import yaml
 import os
 import csv
+import re
 import platform
 import requests
 import json
 import argparse
+from urllib.parse import urlparse, unquote
 from pathlib import Path
 from termcolor import colored
+from http.server import SimpleHTTPRequestHandler, HTTPServer
+from threading import Thread
 
 # -----------------
 # GLOBALS
@@ -20,6 +24,25 @@ if platform.system().lower() == 'windows':
 
 # -----------------
 # FUNCTIONS
+def start_http_server(port, directory):
+    class CustomHandler(SimpleHTTPRequestHandler):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, directory=directory, **kwargs)
+
+    def run_server():
+        try:
+            server_address = ('0.0.0.0', port)
+            httpd = HTTPServer(server_address, CustomHandler)
+            print(f"Server started on port {port}")
+            httpd.serve_forever()
+        except KeyboardInterrupt:
+            print("\nServer stopped.")
+
+    # Start the server in a separate thread
+    server_thread = Thread(target=run_server)
+    server_thread.daemon = True
+    server_thread.start()
+    
 def do_i_have_perms(url):
     """Checks if client has permissions to call AnkiConnect
 
@@ -110,16 +133,49 @@ def create_notes_request(target_csv):
         csv_data = csv.DictReader(file, delimiter=';')
         
         notes_array = []
-        for row in csv_data:
+        for row in csv_data:            
             fields_obj = {}
             for field in deck_config["fields"]:
-                fields_obj[field] = row[field]
+                # Skip fields with no value or ones that contain media
+                is_media = re.search(field, 'picture', re.IGNORECASE) or re.search(field, 'audio', re.IGNORECASE)
+                if row[field] is not None and not is_media:
+                    fields_obj[field] = row[field]
+                
+            # Media handler
+            media_body = []
+            for k, v in row.items():
+                if re.search(k, 'picture', re.IGNORECASE) or re.search(k, 'audio', re.IGNORECASE):
+                    if v is not None:
+                        try:
+                            # Check if media is accessible
+                            if deck_config["urlCheck"]["enabled"]:
+                                timeout = deck_config["urlCheck"]["timeout"]
+                                media_request_content_type = requests.head(v, timeout=timeout).headers.get('content-type')
+                                if not media_request_content_type.startswith('image') and not media_request_content_type.startswith("audio"):
+                                    raise Exception(f"Content type '{media_request_content_type}' inacceptable for media")
+                        
+                            media_type = k.split("_")[0]
+                            url_filename = os.path.basename(unquote(urlparse(v).path))                        
+                            media_body.append({
+                                "url": v,
+                                "filename": url_filename,
+                                "fields": [k]
+                            })
+                            
+                        except Exception as e:
+                            print(colored(f"[X]   > Not able to download '{v}': {str(e)}", 'red'))
+                            
             
             note_body = {
                 "deckName": f"{deck_config["masterDeckName"]}::{deck_name}",
                 "modelName": deck_config["modelName"],
                 "fields": fields_obj
             }
+            
+            if len(media_body) > 0:
+                note_body[media_type] = media_body
+                
+            print(note_body)
             
             notes_array.append(note_body)
     
@@ -130,10 +186,6 @@ def create_notes_request(target_csv):
             "notes": notes_array
         }
     }
-    
-    f = open("notes_request_dump.json", "w")
-    f.write(json.dumps(request))
-    f.close()
     
     return request
 
@@ -171,6 +223,11 @@ def main():
     args = parser.parse_args()
         
     url = f"http://{args.host}"
+    
+    # Webserver
+    if deck_config["webserver"]:
+        port = deck_config.get("webserverPort", 1233)
+        start_http_server(port, os.path.join(os.getcwd(), "anki", "assets"))
 
     print(colored('[?] Checking for AnkiConnect permissions...', 'yellow'))
     if not do_i_have_perms(url):
@@ -185,7 +242,11 @@ def main():
     # Create base data
     print(colored('[+] Creating base data...', 'yellow'))
     model_request = create_model_request()
-    requests.post(url, json = model_request)
+    answer = requests.post(url, json = model_request)
+    
+    answer_error = answer.json()["error"]
+    if not "name already exists" in answer_error:
+        raise Exception(f"Error creating model: {answer_error}")
 
     for deck in decks:
         print(colored('[i] Processing deck:', 'cyan'), deck)
