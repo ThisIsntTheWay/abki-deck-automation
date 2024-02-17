@@ -7,5 +7,5 @@ fields:
  - picture
 webserver: true
 urlCheck:
-  enabled: false
+  enabled: true
   timeout: 1
