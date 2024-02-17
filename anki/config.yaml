@@ -1,0 +1,11 @@
+masterDeckName: test_deck
+modelName: test_model
+modelNameDescriptive: test_model
+fields:
+ - question
+ - answer
+ - picture
+webserver: true
+urlCheck:
+  enabled: false
+  timeout: 1
