@@ -33,7 +33,7 @@ def start_http_server(port, directory):
         try:
             server_address = ('0.0.0.0', port)
             httpd = HTTPServer(server_address, CustomHandler)
-            print(f"Server started on port {port}")
+            print(colored(f"[i] Webserver enabled, listening on port {port}", 'cyan'))
             httpd.serve_forever()
         except KeyboardInterrupt:
             print("\nServer stopped.")

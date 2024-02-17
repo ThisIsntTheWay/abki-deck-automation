@@ -1,0 +1,6 @@
+anki/**
+.git/**
+*.md
+
+# Dockerfile, dockerignore
+*ocker*

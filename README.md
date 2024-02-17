@@ -10,7 +10,13 @@ assemble.py <host> <deck_export_path>
 - `<host>` is the AnkiConnect instance and must be specified as `<ip>:<port>`.
 - `<deck_export_path>` is the absolute path of the exported deck file.
 
-Additionally, the validity of the `anki` folder can be checked by running `check.py <folder>`.
+_Additionally, the validity of the `anki` folder can be checked by running `check.py <folder>`._
+
+As an alternative, a docker image can be used that runs both `check.py` and `assemble.py`:
+```bash
+docker run -v $(pwd):/app thisisnttheway/anki-deck-compiler:latest <host:port> <folder>
+# The Anki directory must be mounted into /app  
+```
 
 ### Folder structure
 The script expects the following folder structure:
