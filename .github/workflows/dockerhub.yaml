@@ -34,9 +34,9 @@ jobs:
         with:
           images: thisisnttheway/anki-deck-compiler
           tags: |
-            type=ref,event=branch
             type=ref,event=tag
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+            type=ref,event=branch,enable=${{ github.ref != format('refs/heads/{0}', 'main') }}
             type=sha
 
       - name: Build and push
