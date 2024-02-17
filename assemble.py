@@ -141,8 +141,9 @@ def create_notes_request(target_csv):
                 if row[field] is not None and not is_media:
                     fields_obj[field] = row[field]
                 
-            # Media handler
+            # Handle tags and media
             media_body = []
+            tags = []
             for k, v in row.items():
                 if re.search(k, 'picture', re.IGNORECASE) or re.search(k, 'audio', re.IGNORECASE):
                     if v is not None:
@@ -164,13 +165,18 @@ def create_notes_request(target_csv):
                             
                         except Exception as e:
                             print(colored(f"[X]   > Not able to download '{v}': {str(e)}", 'red'))
-                            
+                elif re.search(k, 'tags', re.IGNORECASE):
+                    if v is not None:
+                        tags = v.strip().split(",")
             
             note_body = {
                 "deckName": f"{deck_config["masterDeckName"]}::{deck_name}",
                 "modelName": deck_config["modelName"],
                 "fields": fields_obj
             }
+            
+            if len(tags) > 0:
+                note_body["tags"] = tags
             
             if len(media_body) > 0:
                 note_body[media_type] = media_body

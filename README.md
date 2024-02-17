@@ -111,3 +111,11 @@ urlCheck:
 > Assets stored in `./anki/assets` are then served at `http://<ip>:1233/<file.suffix>`.  
 > Note that the listen address is `0.0.0.0`.
 
+
+#### Tags
+To add tags to notes, add them into the field `tags` in a CSV.  
+Tags are separated using `,`.
+
+> [!NOTE]
+> It is not necessary to add `tags` to the fields in `config.yaml`.
+> Additionally, whitespaces will be stripped.  
