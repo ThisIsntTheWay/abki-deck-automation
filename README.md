@@ -1,4 +1,8 @@
-## Building
+# Anki deck automation
+This repo provides tools to automatically build and export an Anki deck.  
+Will require an active AnkiConnect instance.
+
+## Usage
 To assemble a deck, execute `assemble.py`:
 ```bash
 assemble.py <host> <deck_export_path>
