@@ -156,7 +156,7 @@ def create_notes_request(target_csv):
                                     raise Exception(f"Content type '{media_request_content_type}' inacceptable for media")
                         
                             media_type = k.split("_")[0]
-                            url_filename = os.path.basename(unquote(urlparse(v).path))                        
+                            url_filename = os.path.basename(unquote(urlparse(v).path))
                             media_body.append({
                                 "url": v,
                                 "filename": url_filename,
@@ -180,8 +180,6 @@ def create_notes_request(target_csv):
             
             if len(media_body) > 0:
                 note_body[media_type] = media_body
-                
-            print(note_body)
             
             notes_array.append(note_body)
     
