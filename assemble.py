@@ -75,7 +75,7 @@ def create_deck_request(name):
         "action": "createDeck",
         "version": 6,
         "params": {
-            "deck": f"{deck_config["masterDeckName"]}::{name}"
+            "deck": f"{deck_config['masterDeckName']}::{name}"
         }        
     }
     
@@ -170,7 +170,7 @@ def create_notes_request(target_csv):
                         tags = v.strip().split(",")
             
             note_body = {
-                "deckName": f"{deck_config["masterDeckName"]}::{deck_name}",
+                "deckName": f"{deck_config['masterDeckName']}::{deck_name}",
                 "modelName": deck_config["modelName"],
                 "fields": fields_obj
             }
@@ -249,10 +249,11 @@ def main():
     print(colored('[+] Creating base data...', 'yellow'))
     model_request = create_model_request()
     answer = requests.post(url, json = model_request)
-    
+
     answer_error = answer.json()["error"]
-    if not "name already exists" in answer_error:
-        raise Exception(f"Error creating model: {answer_error}")
+    if answer_error is not None:
+        if not "name already exists" in answer_error:
+            raise Exception(f"Error creating model: {answer_error}")
 
     for deck in decks:
         print(colored('[i] Processing deck:', 'cyan'), deck)
