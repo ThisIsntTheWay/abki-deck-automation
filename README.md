@@ -108,7 +108,7 @@ urlCheck:
 > [!TIP] 
 > If media only exists locally, a local webserver can be launched by setting `webserver: true` in `config.yaml`.  
 > Port `1233` will be used by default, although this can be overridden using `webserverPort: <int>`.  
-> Assets stored in `./anki/assets` are then served at `http://<ip>:1233/<file.suffix>`.  
+> Files stored in `./anki/assets` are then served at `http://<ip>:1233/<file>`.  
 > Note that the listen address is `0.0.0.0`.
 
 
@@ -117,5 +117,5 @@ To add tags to notes, add them into the field `tags` in a CSV.
 Tags are separated using `,`.
 
 > [!NOTE]
-> It is not necessary to add `tags` to the fields in `config.yaml`.
+> It is not necessary to add `tags` to the fields in `config.yaml`.  
 > Additionally, whitespaces will be stripped.  
