@@ -1,9 +1,9 @@
 #!/bin/sh
 set -e
 
-HOST=$([ "$1" ] && echo "$1" || echo "localhost:8765")
-ANKI_FOLDER=$([ "$2" ] && echo "$2" || echo "anki")
-EXPORT_PATH=$([ "$3" ] && echo "$3" || echo "anki.apkg")
+ANKI_FOLDER=$([ "$1" ] && echo "$1" || echo "anki")
+EXPORT_PATH=$([ "$2" ] && echo "$2" || echo "anki.apkg")
+HOST=$([ "$3" ] && echo "$3" || echo "localhost:8765")
 
 if ! [[ $EXPORT_PATH =~ ".apkg" ]]; then
     echo "[X] EXPORT_PATH ($EXPORT_PATH) is not an .apkg file."

@@ -3,20 +3,29 @@ This repo provides tools to automatically build and export an Anki deck.
 Will require an active AnkiConnect instance.
 
 ## Usage
+The easiest way to use this tool is through a docker image:
+```bash
+docker run -v $(pwd):/opt thisisnttheway/anki-deck-compiler:latest <anki_folder> <anki_export_path> <host:port>
+# Containerized, the script expects <anki_folder> at /opt
+```
+
+Alternatively, the repo can be cloned and dependencies manually installed:
+```bash
+git clone https://github.com/ThisIsntTheWay/anki-deck-automation.git
+cd anki-deck-automation
+pip install -r requirements.txt
+```
+
 To assemble a deck, execute `assemble.py`:
 ```bash
 assemble.py <anki_folder> <deck_export_path> <host>
 ```
+- `<anki_folder>` is the anki folder.
 - `<host>` is the AnkiConnect instance and must be specified as `<ip>:<port>`.
 - `<deck_export_path>` is the absolute path of the exported deck file.
 
 _Additionally, the validity of the `anki` folder can be checked by running `check.py <folder>`._
 
-As an alternative, a docker image can be used that runs both `check.py` and `assemble.py`:
-```bash
-docker run -v $(pwd):/opt thisisnttheway/anki-deck-compiler:latest <host:port> <anki_folder> <anki_export_path>
-# Containerized, the script expects <anki_folder> at /opt
-```
 
 ### Folder structure
 The script expects the following folder structure:
