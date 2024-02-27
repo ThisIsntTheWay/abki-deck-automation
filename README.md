@@ -61,23 +61,23 @@ _`masterDeckName` is the name of the deck under which all subdecks (`/anki/decks
 
 ### CSVs
 CSVs represent subdecks and contain notes.  
-They must follow this structure:
+They are assembled as such:
 
 ```csv
-field1;field2
-My question 1;My answer 1
-My question 2;My answer 2
-My question 3;My answer 3
+question;answer;picture
+My question 1;My answer 1;https://ex.com/red.png
+My question 2;My answer 2;https://ex.com/green.png
+My question 3;My answer 3;https://ex.com/blue.png
 ```
 
 > [!WARNING]  
-> CSVs **must** use the `;` delimiter.  
-> Only fields that are specified in `config.yaml` will be included in notes.  
-> Unknown fields will be ignored.
+> By default, the script assumes the `;` delimiter.  
+> To change this, set `csvDelimiter` in the `config.yaml` to a different value.  
+> Only fields that are specified in `config.yaml` will actually be included in notes, apart from `tags` (See below).
 
 #### Media
 To add pictures/audio, create new fields containing either `image` or `audio` in their name (case insensitive).  
-For example, the following field names will create an **audio** field:  
+For example, the following field names would create an **audio** field:  
 - `Audio`
 - `AudioSentence`
 - `sentenceAudio`
@@ -95,7 +95,8 @@ https://ex.com/example.jpg;https://ex.com/example.mp3
 > [!NOTE]
 > The script will check URLs before downloading them.  
 > If the URL does not respond or does not return a media type, then the field gets skipped in the note.  
-> This behaviour can be changed in `config.yaml` (shown are the defaults):
+> This behaviour can be changed in `config.yaml` (shown are the defaults if not specified otherwise):
+
 ```yaml
 urlCheck:
   # Enable URL check
@@ -104,9 +105,10 @@ urlCheck:
   timeout: 1
 ```
 
-##### Webserver
+##### Local media
 If media only exists locally, a webserver can be launched that serves all files under `./anki/assets`.  
-The webserver can be configured in the `config.yaml` as such:
+The webserver can be configured in the `config.yaml` as such (shown are the defaults if not specified otherwise):  
+
 ```yaml
 webserver:
   # Enable webserver
@@ -116,7 +118,6 @@ webserver:
   # Listen address
   listenAddress: 0.0.0.0
 ```
-_Shown are the default values._
 
 Assets can the be accessed at `http://<ip>:<port>/<file>`.  
 (E.g. `http://localhost:1233/file.mp3`)

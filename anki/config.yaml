@@ -4,6 +4,7 @@ fields:
   - question
   - answer
   - picture
+csvDelimiter: ";"
 webserver:
   enabled: true
   port: 1233

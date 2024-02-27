@@ -137,10 +137,11 @@ def create_notes_request(target_csv):
     """
     
     path = f"{anki_decks_path}/{target_csv}"
+    delimiter = deck_config.get("csvDelimiter", ";")
     
     deck_name = Path(path).stem
     with open(path, newline='') as file:
-        csv_data = csv.DictReader(file, delimiter=';')
+        csv_data = csv.DictReader(file, delimiter=delimiter)
         
         notes_array = []
         for row in csv_data:            
