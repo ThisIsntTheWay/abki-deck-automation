@@ -5,7 +5,7 @@ Will require an active AnkiConnect instance.
 ## Usage
 To assemble a deck, execute `assemble.py`:
 ```bash
-assemble.py <host> <deck_export_path>
+assemble.py <anki_folder> <deck_export_path> <host>
 ```
 - `<host>` is the AnkiConnect instance and must be specified as `<ip>:<port>`.
 - `<deck_export_path>` is the absolute path of the exported deck file.
@@ -14,8 +14,8 @@ _Additionally, the validity of the `anki` folder can be checked by running `chec
 
 As an alternative, a docker image can be used that runs both `check.py` and `assemble.py`:
 ```bash
-docker run -v $(pwd):/app thisisnttheway/anki-deck-compiler:latest <host:port> <folder>
-# The Anki directory must be mounted into /app  
+docker run -v $(pwd):/opt thisisnttheway/anki-deck-compiler:latest <host:port> <anki_folder> <anki_export_path>
+# Containerized, the script expects <anki_folder> at /opt
 ```
 
 ### Folder structure

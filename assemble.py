@@ -14,7 +14,14 @@ from threading import Thread
 
 # -----------------
 # GLOBALS
-anki_card_config_basepath = "anki"
+parser = argparse.ArgumentParser()
+
+parser.add_argument("folder", help="Anki folder", nargs="?", default="anki")
+parser.add_argument("export_path", help="Absolute path of deck export", nargs="?", default="/export/export.apkg")
+parser.add_argument("host", help="AnkiConnect host", nargs="?", default="localhost:8765")
+args = parser.parse_args()
+
+anki_card_config_basepath = args.folder
 anki_decks_path = f"{anki_card_config_basepath}/decks"
 single_deck_master_file = "main.csv"
 
@@ -235,13 +242,7 @@ def create_deck_export_request(deck_name, path, include_scheduling = False):
 
 # -----------------
 # MAIN
-def main():
-    parser = argparse.ArgumentParser()
-    
-    parser.add_argument("host", help="AnkiConnect host", nargs="?", default="localhost:8765")
-    parser.add_argument("export_path", help="Absolute path of deck export", nargs="?", default="/export/export.apkg")
-    args = parser.parse_args()
-        
+def main():        
     url = f"http://{args.host}"
     
     # Webserver
