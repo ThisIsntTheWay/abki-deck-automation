@@ -24,19 +24,29 @@ if platform.system().lower() == 'windows':
 
 # -----------------
 # FUNCTIONS
-def start_http_server(port, directory):
+def start_http_server(port, listen_address, directory):
+    """Launch an HTTP webserver
+
+    Args:
+        port (int): Listen port
+        listen_address (string): Listen address
+        directory (string): Serving directory
+    """
     class CustomHandler(SimpleHTTPRequestHandler):
         def __init__(self, *args, **kwargs):
             super().__init__(*args, directory=directory, **kwargs)
 
     def run_server():
         try:
-            server_address = ('0.0.0.0', port)
+            server_address = (listen_address, port)
             httpd = HTTPServer(server_address, CustomHandler)
-            print(colored(f"[i] Webserver enabled, listening on port {port}", 'cyan'))
+            print(colored(f"[i] Webserver enabled, listening on: {listen_address}:{port}", 'cyan'))
             httpd.serve_forever()
         except KeyboardInterrupt:
             print("\nServer stopped.")
+        except Exception as e:
+            print(colored(f"Webserver serving error: {e}", 'red'))
+            raise SystemExit(str(e))
 
     # Start the server in a separate thread
     server_thread = Thread(target=run_server)
@@ -229,9 +239,11 @@ def main():
     url = f"http://{args.host}"
     
     # Webserver
-    if deck_config["webserver"]:
-        port = deck_config.get("webserverPort", 1233)
-        start_http_server(port, os.path.join(os.getcwd(), "anki", "assets"))
+    if "webserver" in deck_config.keys():
+        if deck_config["webserver"].get("enabled", True):
+            port = deck_config["webserver"].get("port", 1233)
+            listen_address = deck_config["webserver"].get("listenAddress", "0.0.0.0")
+            start_http_server(port, listen_address, os.path.join(os.getcwd(), "anki", "assets"))
 
     print(colored('[?] Checking for AnkiConnect permissions...', 'yellow'))
     if not do_i_have_perms(url):

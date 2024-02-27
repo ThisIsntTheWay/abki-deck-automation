@@ -104,12 +104,22 @@ urlCheck:
   timeout: 1
 ```
 
-> [!TIP] 
-> If media only exists locally, a local webserver can be launched by setting `webserver: true` in `config.yaml`.  
-> Port `1233` will be used by default, although this can be overridden using `webserverPort: <int>`.  
-> Files stored in `./anki/assets` are then served at `http://<ip>:1233/<file>`.  
-> Note that the listen address is `0.0.0.0`.
+##### Webserver
+If media only exists locally, a webserver can be launched that serves all files under `./anki/assets`.  
+The webserver can be configured in the `config.yaml` as such:
+```yaml
+webserver:
+  # Enable webserver
+  enabled: true
+  # Listen port
+  port: 1233
+  # Listen address
+  listenAddress: 0.0.0.0
+```
+_Shown are the default values._
 
+Assets can the be accessed at `http://<ip>:<port>/<file>`.  
+(E.g. `http://localhost:1233/file.mp3`)
 
 #### Tags
 To add tags to notes, add them into the field `tags` in a CSV.  
