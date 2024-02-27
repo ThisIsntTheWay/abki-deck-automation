@@ -52,7 +52,6 @@ The file `/anki/config.yaml` must at minimum contain the following:
 ```yaml
 masterDeckName: test_deck
 modelName: test_model
-modelNameDescriptive: test_model
 fields:
  - question
  - answer

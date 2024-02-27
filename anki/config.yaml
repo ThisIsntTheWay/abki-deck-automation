@@ -1,6 +1,5 @@
 masterDeckName: test_deck
 modelName: test_model
-modelNameDescriptive: test_model
 fields:
  - question
  - answer

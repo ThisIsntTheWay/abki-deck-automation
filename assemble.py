@@ -109,7 +109,7 @@ def create_model_request():
             "isCloze": False,
             "cardTemplates": [
                 {
-                    "Name": deck_config["modelNameDescriptive"],
+                    "Name": deck_config["modelName"],
                     "Front": anki_card_formats[0],
                     "Back": anki_card_formats[1]
                 }
