@@ -276,9 +276,9 @@ def main():
     master_deck_name = deck_config['masterDeckName']
 
     if is_single_deck:
-        print(colored('[i] singleDeck is set to true. Only the FIRST CSV will be consumed and saved as deck ', 'cyan'), master_deck_name)
+        print(colored('[i] singleDeck is set to true. Deck will be saved as', 'cyan'), master_deck_name)
         if not single_deck_master_file in decks:
-            err_msg = f"singleDeck is set to True, but {single_deck_master_file} was not found."
+            err_msg = f"Deck file {single_deck_master_file} was not found."
             print(colored(f"[X] {err_msg}", 'red'))
             raise FileNotFoundError(err_msg)
 
