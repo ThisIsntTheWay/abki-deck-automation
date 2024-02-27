@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/bin/sh
 set -e
 
 HOST=$([ "$1" ] && echo "$1" || echo "localhost:8765")
