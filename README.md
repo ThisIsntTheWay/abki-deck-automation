@@ -8,6 +8,9 @@ The easiest way to use this tool is through a docker image:
 docker run -v $(pwd):/opt thisisnttheway/anki-deck-compiler:latest <anki_folder> <anki_export_path> <host:port>
 # Containerized, the script expects <anki_folder> at /opt
 ```
+- `<anki_folder>` is the anki folder.
+- `<anki_export_path>` is the absolute path of the exported deck file.
+- `<host:port>` is the AnkiConnect instance and must be specified as `<ip>:<port>`.
 
 Alternatively, the repo can be cloned and dependencies manually installed:
 ```bash
@@ -18,11 +21,8 @@ pip install -r requirements.txt
 
 To assemble a deck, execute `assemble.py`:
 ```bash
-assemble.py <anki_folder> <deck_export_path> <host>
+assemble.py <anki_folder> <anki_export_path> <host:port>
 ```
-- `<anki_folder>` is the anki folder.
-- `<host>` is the AnkiConnect instance and must be specified as `<ip>:<port>`.
-- `<deck_export_path>` is the absolute path of the exported deck file.
 
 _Additionally, the validity of the `anki` folder can be checked by running `check.py <folder>`._
 
@@ -69,9 +69,10 @@ fields:
 
 - `masterDeckName`
   - Name of the (master) deck under which all subdecks will be stored under.
-- `models`
-  - Array of models to create in Anki.
-  - Each entry must have the keys `name` and `fields[]`.
+- `modelName`
+  - Name of the model to create.
+- `fields`
+  - Fields for the model.
 
 #### Single deck
 By default, the script will create subdecks using all the CSV files under `/anki/decks/*.csv`.  
