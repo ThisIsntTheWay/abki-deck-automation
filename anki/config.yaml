@@ -1,8 +1,9 @@
 masterDeckName: test_deck
 modelName: test_model
 fields:
- - question
- - answer
+  - question
+  - answer
+  - picture
 singleDeck: false
 csvDelimiter: ";"
 webserver:
