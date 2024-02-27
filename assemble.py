@@ -16,6 +16,8 @@ from threading import Thread
 # GLOBALS
 anki_card_config_basepath = "anki"
 anki_decks_path = f"{anki_card_config_basepath}/decks"
+single_deck_master_file = "main.csv"
+
 with open(f"{anki_card_config_basepath}/config.yaml", "r") as stream:
     deck_config = yaml.safe_load(stream)
     
@@ -80,12 +82,15 @@ def create_deck_request(name):
     Returns:
         object: Request body for AnkiConneect
     """
+
+    is_single_deck = deck_config.get("singleDeck", False)
+    deckName = name if is_single_deck else f"{deck_config['masterDeckName']}::{name}"
     
     request = {
         "action": "createDeck",
         "version": 6,
         "params": {
-            "deck": f"{deck_config['masterDeckName']}::{name}"
+            "deck": deckName
         }        
     }
     
@@ -129,17 +134,17 @@ def create_model_request():
     
     return request
 
-def create_notes_request(target_csv):
+def create_notes_request(target_csv, target_deck):
     """Creates notes
 
     Args:
         target_csv (string): Path of CSV containing note data
+        target_deck (string): Name of target deck
     """
     
     path = f"{anki_decks_path}/{target_csv}"
     delimiter = deck_config.get("csvDelimiter", ";")
     
-    deck_name = Path(path).stem
     with open(path, newline='') as file:
         csv_data = csv.DictReader(file, delimiter=delimiter)
         
@@ -181,7 +186,7 @@ def create_notes_request(target_csv):
                         tags = v.strip().split(",")
             
             note_body = {
-                "deckName": f"{deck_config['masterDeckName']}::{deck_name}",
+                "deckName": target_deck,
                 "modelName": deck_config["modelName"],
                 "fields": fields_obj
             }
@@ -253,7 +258,7 @@ def main():
     else:
         print(colored('[i] Permissions have been granted.', 'green'))
 
-    # Iterate through all questions
+    # Iterate through all decks
     decks = [f for f in os.listdir(anki_decks_path) if os.path.isfile(os.path.join(anki_decks_path, f))]
 
     # Create base data
@@ -265,15 +270,29 @@ def main():
     if answer_error is not None:
         if not "name already exists" in answer_error:
             raise Exception(f"Error creating model: {answer_error}")
+        
+    # Deck options
+    is_single_deck = deck_config.get("singleDeck", False)
+    master_deck_name = deck_config['masterDeckName']
+
+    if is_single_deck:
+        print(colored('[i] singleDeck is set to true. Only the FIRST CSV will be consumed and saved as deck ', 'cyan'), master_deck_name)
+        if not single_deck_master_file in decks:
+            err_msg = f"singleDeck is set to True, but {single_deck_master_file} was not found."
+            print(colored(f"[X] {err_msg}", 'red'))
+            raise FileNotFoundError(err_msg)
 
     for deck in decks:
-        print(colored('[i] Processing deck:', 'cyan'), deck)
+        this_deck_name = Path(deck).stem
+        deck_name = master_deck_name if is_single_deck else f"{master_deck_name}::{this_deck_name}"
+
+        print(colored('[i] Processing deck:', 'cyan'), deck, colored(f"({deck_name})", 'yellow'))
         try:
             print(colored('[+] > Creating deck...', 'yellow'))
-            requests.post(url, json = create_deck_request(Path(deck).stem))
+            requests.post(url, json = create_deck_request(deck_name))
             
             print(colored('[+] > Creating notes...', 'yellow'))
-            answer = requests.post(url, json = create_notes_request(deck))
+            answer = requests.post(url, json = create_notes_request(deck, deck_name))
             
             amount_bad = answer.json()["result"].count(None)
             if amount_bad > 0:
@@ -281,6 +300,9 @@ def main():
                 #raise Exception("Not all notes created")
         except Exception as e:
             raise SystemExit(str(e))
+        
+        if is_single_deck:
+            break
             
     print(colored(f"[i] Exporting deck to '{args.export_path}'", 'cyan'))
     answer = requests.post(url, json = create_deck_export_request(deck_config["masterDeckName"], args.export_path))

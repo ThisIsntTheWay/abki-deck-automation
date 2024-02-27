@@ -44,6 +44,7 @@ The following files and folders are of interest
 - `decks`
   - CSV files of decks.
     Each file gets rendered into its own subdeck, with the file name being name of the deck.
+    - Assuming `singleDeck: False` in `config.yaml`
 - `config.yaml`
   - Contains deck information such as master deck name, model name and note fields.
 
@@ -57,7 +58,16 @@ fields:
  - answer
 ```
 
-_`masterDeckName` is the name of the deck under which all subdecks (`/anki/decks/*.csv`) will be stored._
+- `masterDeckName`
+  - Name of the (master) deck under which all subdecks will be stored under.
+- `models`
+  - Array of models to create in Anki.
+  - Each entry must have the keys `name` and `fields[]`.
+
+#### Single deck
+By default, the script will create subdecks using all the CSV files under `/anki/decks/*.csv`.  
+If `singleDeck: true` is set in the `config.yaml`, the script will instead create a single deck with the name `masterDeckName`.  
+In this case, the script will only consume the CSV file `main.csv`.
 
 ### CSVs
 CSVs represent subdecks and contain notes.  
