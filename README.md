@@ -58,7 +58,7 @@ anki
 - `config.yaml`
   - Contains deck information such as master deck name, model name and note fields.
 
-### Script/deck config
+### Configuration
 The file `/anki/config.yaml` contains configuration of the script and Anki deck itself.  
 It must, at minimum, contain the following:
 ```yaml
@@ -78,9 +78,16 @@ fields:
  
 An [example `config.yaml`](https://github.com/ThisIsntTheWay/anki-deck-automation/blob/main/anki/config.yaml) can be found in `/anki`.
 
-### CSVs
-CSVs represent subdecks and contain notes.  
-They are assembled as such:
+### Decks
+Decks are defined as CSVs in `/anki/decks`.  
+
+> [!NOTE]
+> By default, the script will create subdecks using all available CSV files.  
+> If `singleDeck: true` is set in the `config.yaml`, the script will instead create a single deck with the name `masterDeckName`.  
+> In this case, the script will only consume a CSV file called `main.csv` in this folder.
+
+The CSV header row contains the [fields](https://github.com/ThisIsntTheWay/anki-deck-automation/blob/a429841ff4c3492a94b0374684434bb377652ad2/anki/config.yaml#L3).  
+All other rows specify the content for those fields:
 
 ```csv
 question;answer;picture
@@ -89,17 +96,21 @@ My question 2;My answer 2;https://ex.com/green.png
 My question 3;My answer 3;https://ex.com/blue.png
 ```
 
-> [!NOTE]
-> By default, the script will create subdecks using all the CSV files under `/anki/decks/*.csv`.  
-> If `singleDeck: true` is set in the `config.yaml`, the script will instead create a single deck with the name `masterDeckName`.  
-> In this case, the script will only consume a CSV file called `main.csv` in this folder.
-
 > [!WARNING]  
 > By default, the script assumes the `;` delimiter.  
 > To change this, `csvDelimiter` in `config.yaml` can be set to a different value.  
 > Only fields that are specified in `config.yaml` will actually be included in notes, apart from `tags` (See below).
 
-#### Media
+#### Tags
+To add tags to notes, add them into the field `tags` in a CSV.  
+Tags are separated using `,`.
+
+> [!NOTE]
+> It is not necessary to add `tags` to the fields in `config.yaml`.  
+> Additionally, whitespaces will be stripped.  
+
+
+### Media
 To add pictures/audio, create new fields containing either `image` or `audio` in their name (case insensitive).  
 For example, the following field names would create an **audio** field:  
 - `Audio`
@@ -145,11 +156,3 @@ webserver:
 
 Assets can the be accessed at `http://<ip>:<port>/<file>`.  
 (E.g. `http://localhost:1233/file.mp3`)
-
-#### Tags
-To add tags to notes, add them into the field `tags` in a CSV.  
-Tags are separated using `,`.
-
-> [!NOTE]
-> It is not necessary to add `tags` to the fields in `config.yaml`.  
-> Additionally, whitespaces will be stripped.  
