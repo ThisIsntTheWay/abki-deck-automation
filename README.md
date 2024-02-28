@@ -42,9 +42,9 @@ anki
 └── decks
     ├── Subdeck 1.csv
     └── Subdeck 2.csv
+        ...
 ```
 
-The following files and folders are of interest
 - `assets`
   - Media files used in the deck.
   - Optional and only used if `webserver: true` is set in `config.yaml`
@@ -52,13 +52,15 @@ The following files and folders are of interest
   - Card template definitions.
 - `decks`
   - CSV files of decks.
-    Each file gets rendered into its own subdeck, with the file name being name of the deck.
-    - Assuming `singleDeck: False` in `config.yaml`
+    Each file gets rendered into its own subdeck, with the **file name** being the name of the deck.
+    - Assuming `singleDeck: false` in `config.yaml`.
+      If set to `true`, only a file called `main.csv` will be consumed.
 - `config.yaml`
   - Contains deck information such as master deck name, model name and note fields.
 
-### Deck config
-The file `/anki/config.yaml` must at minimum contain the following:
+### Script/deck config
+The file `/anki/config.yaml` contains configuration of the script and Anki deck itself.  
+It must, at minimum, contain the following:
 ```yaml
 masterDeckName: test_deck
 modelName: test_model
@@ -73,11 +75,8 @@ fields:
   - Name of the model to create.
 - `fields`
   - Fields for the model.
-
-#### Single deck
-By default, the script will create subdecks using all the CSV files under `/anki/decks/*.csv`.  
-If `singleDeck: true` is set in the `config.yaml`, the script will instead create a single deck with the name `masterDeckName`.  
-In this case, the script will only consume the CSV file `main.csv`.
+ 
+An [example `config.yaml`](https://github.com/ThisIsntTheWay/anki-deck-automation/blob/main/anki/config.yaml) can be found in `/anki`.
 
 ### CSVs
 CSVs represent subdecks and contain notes.  
@@ -90,9 +89,14 @@ My question 2;My answer 2;https://ex.com/green.png
 My question 3;My answer 3;https://ex.com/blue.png
 ```
 
+> [!NOTE]
+> By default, the script will create subdecks using all the CSV files under `/anki/decks/*.csv`.  
+> If `singleDeck: true` is set in the `config.yaml`, the script will instead create a single deck with the name `masterDeckName`.  
+> In this case, the script will only consume a CSV file called `main.csv` in this folder.
+
 > [!WARNING]  
 > By default, the script assumes the `;` delimiter.  
-> To change this, set `csvDelimiter` in the `config.yaml` to a different value.  
+> To change this, `csvDelimiter` in `config.yaml` can be set to a different value.  
 > Only fields that are specified in `config.yaml` will actually be included in notes, apart from `tags` (See below).
 
 #### Media
@@ -125,7 +129,7 @@ urlCheck:
   timeout: 1
 ```
 
-##### Local media
+#### Local media
 If media only exists locally, a webserver can be launched that serves all files under `./anki/assets`.  
 The webserver can be configured in the `config.yaml` as such (shown are the defaults if not specified otherwise):  
 
